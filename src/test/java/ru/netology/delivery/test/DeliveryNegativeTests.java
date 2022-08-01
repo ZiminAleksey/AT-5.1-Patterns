@@ -134,4 +134,3 @@ public class DeliveryNegativeTests {
     }
 
 }
-//        $("[data-test-id='date'] .input__sub").shouldHave(exactText("Заказ на выбранную дату невозможен"));
