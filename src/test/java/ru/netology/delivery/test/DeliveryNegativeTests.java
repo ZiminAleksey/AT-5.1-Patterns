@@ -18,10 +18,10 @@ public class DeliveryNegativeTests {
     void form() {
         open("http://localhost:9999");
         int daysToAddForFirstMeeting = 4;
-        LocalDate borderThreeDays = LocalDate.now().plusDays(3);
-        LocalDate borderWeek = LocalDate.now().plusDays(7);
+        var borderDays = DataGenerator.getBorderDays(3);
+        var daysWeek = DataGenerator.getWeekDays(7);
         $("[data-test-id=date] .input__icon").click();
-        if (borderThreeDays.getMonthValue() != borderWeek.getMonthValue()) {
+        if (borderDays.getMonthValue() != daysWeek.getMonthValue()) {
             $("[data-step='1']").click();
         }
         $$("tr td").findBy(text(String.valueOf(LocalDate.now().plusDays(daysToAddForFirstMeeting).getDayOfMonth()))).click();
@@ -85,7 +85,7 @@ public class DeliveryNegativeTests {
     void invalidCityBox() {
         var validUser = DataGenerator.Registration.generateUser("en");
         $("[data-test-id=city] input").setValue(validUser.getCity());
-        $("[data-test-id=name] input").setValue(DataGenerator.generateName("ru"));
+        $("[data-test-id=name] input").setValue(DataGenerator.generateFullName("ru"));
         $("[data-test-id=phone] input").setValue(DataGenerator.generatePhone("ru"));
         $x("//button[contains(@class, 'button_view_extra')]").click();
         $("[data-test-id='city'] .input__sub").shouldHave(exactText("Доставка в выбранный город недоступна"));
@@ -103,7 +103,7 @@ public class DeliveryNegativeTests {
     @Test
     void invalidNameBoxV2() {
         var validUser = DataGenerator.Registration.generateUser("ru");
-        var invalidUser = DataGenerator.CustomInvalidRegistration.generateCustomInvalidUser();
+        var invalidUser = DataGenerator.Registration.generateInvalidUser();
         $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[data-test-id=name] input").setValue(invalidUser.getName());
         $("[data-test-id=phone] input").setValue(validUser.getPhone());
@@ -114,9 +114,10 @@ public class DeliveryNegativeTests {
     @Test
     void invalidPhoneBox() {
         var validUser = DataGenerator.Registration.generateUser("ru");
+        var invalidUser = DataGenerator.Registration.generateInvalidUser();
         $("[data-test-id=city] input").setValue(validUser.getCity());
         $("[data-test-id=name] input").setValue(validUser.getName());
-        $("[data-test-id=phone] input").setValue("+7 999 24");
+        $("[data-test-id=phone] input").setValue(invalidUser.getPhone());
         $x("//button[contains(@class, 'button_view_extra')]").click();
         $("[data-test-id='phone'] .input__sub").shouldHave(exactText("Номер телефона указан неверно"));
     }

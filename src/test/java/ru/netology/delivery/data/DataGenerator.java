@@ -2,15 +2,20 @@ package ru.netology.delivery.data;
 
 import com.github.javafaker.Faker;
 import lombok.Value;
-import lombok.val;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Locale;
-import java.util.Random;
 
 public class DataGenerator {
     private DataGenerator() {
+    }
+
+    public static LocalDate getBorderDays(int daysBorder) {
+        return LocalDate.now().plusDays(daysBorder);
+    }
+    public static LocalDate getWeekDays(int days) {
+        return LocalDate.now().plusDays(days);
     }
 
     public static String generateDate(int shift) {
@@ -22,9 +27,14 @@ public class DataGenerator {
         return faker.address().cityName();
     }
 
-    public static String generateName(String locale) {
+    public static String generateFullName(String locale) {
         Faker faker = new Faker((new Locale(locale)));
         return faker.name().firstName() + " " + faker.name().lastName();
+    }
+
+    public static String generatedName(String locale) {
+        Faker faker = new Faker((new Locale(locale)));
+        return faker.name().firstName();
     }
 
     public static String generatePhone(String locale) {
@@ -32,64 +42,37 @@ public class DataGenerator {
         return faker.phoneNumber().phoneNumber();
     }
 
-    public void clear() {
-
+    public static String generateInvalidPhone(String locale) {
+        Faker faker = new Faker(new Locale(locale));
+        return faker.regexify("123[9999-2-10]");
     }
 
     public static class Registration {
-        private Registration() {
-        }
 
         public static UserInfo generateUser(String locale) {
-            Faker faker = new Faker(new Locale(locale));
-            return new UserInfo(faker.address().cityName(),
-                    faker.name().fullName(),
-                    faker.phoneNumber().phoneNumber());
-        }
-    }
-
-    @Value
-    public static class UserInfo {
-        String city;
-        String name;
-        String phone;
-    }
-
-    public static class CustomRegistration {
-        private CustomRegistration() {
+            return new UserInfo(generateCity(locale),
+                    generateFullName(locale),
+                    generatePhone(locale));
         }
 
-        public static CustomUserInfo generateCustomUser() {
-            String city = "Орёл";
-            String name = "Артём";
-            String phone = "+79991234564";
-            return new CustomUserInfo(city, name, phone);
-        }
-    }
-
-    @Value
-    public static class CustomUserInfo {
-        String city;
-        String name;
-        String phone;
-    }
-
-    public static class CustomInvalidRegistration {
-        private CustomInvalidRegistration() {
+        public static UserInfo generateCustomName(String name) {
+            String city = generateCity("ru");
+            String phone = generatePhone("ru");
+            return new UserInfo(city, name, phone);
         }
 
-        public static CustomInvalidUserInfo generateCustomInvalidUser() {
-            String city = "New York";
-            String name = "Андрей";
-            String phone = "+7999123";
-            return new CustomInvalidUserInfo(city, name, phone);
+        public static UserInfo generateInvalidUser() {
+            String city = generateCity("en");
+            String name = generatedName("ru");
+            String phone = generateInvalidPhone("en");
+            return new UserInfo(city, name, phone);
         }
-    }
 
-    @Value
-    public static class CustomInvalidUserInfo {
-        String city;
-        String name;
-        String phone;
+        @Value
+        public static class UserInfo {
+            String city;
+            String name;
+            String phone;
+        }
     }
 }
